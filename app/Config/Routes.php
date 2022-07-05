@@ -43,13 +43,25 @@ $routes->get('/alldata', 'Login::selectall');
 $routes->get('/allusers', 'Users::index');
 $routes->get('/infouser/(:any)', 'Users::finduser/$1');
 $routes->delete('/delectuser/(:any)', 'Users::Delect_User/$1');
-$routes->put('/repassword/(:any)', 'Users::Resetpass/$1'); ///แก้ไขรูปทุนการศึกษา อยู่ใน edit_scholar_img.js
+$routes->put('/repassword/(:any)', 'Users::Resetpass/$1');
 $routes->post('/addusers', 'Users::Adduser');
 //////////////bill//////////////////////
-$routes->get('/allbill', 'Bill::index');
-$routes->post('/opbill', 'Bill::openbill');
+$routes->get('opbilldateshow', 'Bill::index');///show day in input
+// $routes->post('/opbill', 'Bill::openbill');
+$routes->post('/checkdate', 'Bill::checkDate');
+$routes->put('/updateEndbill', 'Bill::updateEndbill'); 
 
-/*
+///////////////////Store///////////////////////
+$routes->get('/storelist', 'Store::index');
+$routes->get('/findstore/(:any)', 'Store::findstore/$1');
+$routes->delete('/delectstore/(:any)', 'Store::Delect_store/$1');
+$routes->put('/Resetpassstore/(:any)', 'Store::Resetpass/$1'); 
+$routes->post('/addStore', 'Store::AddStore'); 
+
+
+
+/*$routes->get('/findstore/(:any)', 'Store::findstore/$1');
+
  * --------------------------------------------------------------------
  * Additional Routing
  * --------------------------------------------------------------------
