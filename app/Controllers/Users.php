@@ -20,10 +20,15 @@ class Users extends ResourceController
     public function index()
  {
         $umodel = new UserModel();
-        $data = $umodel->orderBy( 'id', 'ASC' )->findAll();
+        $data = $umodel->where('status','admin')->orderBy( 'id', 'ASC' )->findAll();
         return $this->respond( $data );
     }
-
+    public function allnormaluser()
+    {
+           $umodel = new UserModel();
+           $data = $umodel->where('status','normal')->orderBy( 'id', 'ASC' )->findAll();
+           return $this->respond( $data );
+       }
     public function finduser( $id = null )
  {
         $umodel = new UserModel();
@@ -74,7 +79,7 @@ class Users extends ResourceController
             'fullname' => $this->request->getVar( 'fullname' ),
             'username' => $this->request->getVar( 'username' ),
             'Tel' => $this->request->getVar( 'tel' ),
-            'password' => $this->request->getVar( 'password' ),
+            'password' => md5($this->request->getVar( 'password' )),
             'status' => $this->request->getVar( 'status' ),
         ];
         $checkuser = $umodel->where( 'username', $data[ 'username' ] )->findAll();
@@ -108,7 +113,7 @@ class Users extends ResourceController
         $umodel = new UserModel();
 
         $data = [
-            'password' => $this->request->getVar( 'password' ),
+            'password' => md5($this->request->getVar( 'password' ))
         ];
         $umodel->update( $id, $data );
         if ( $umodel ) {

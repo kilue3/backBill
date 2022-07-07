@@ -68,7 +68,7 @@ class Store extends ResourceController
                  $umodel = new Storemodel();
          
                  $data = [
-                     'Store_password' => $this->request->getVar( 'password' ),
+                     'Store_password' => md5($this->request->getVar( 'password' ))
                  ];
                  $umodel->update( $id, $data );
                  if ( $umodel ) {
@@ -90,8 +90,8 @@ class Store extends ResourceController
                         'Store_email' => $this->request->getVar( 'email' ),
                         'Contact_name' => $this->request->getVar( 'contactname' ),
                         'Tel' => $this->request->getVar( 'tel' ),
-                        'Store_password' => $this->request->getVar( 'password' ),
-                        'Store_status' =>"ปกติ" ,
+                        'Store_password' =>  md5($this->request->getVar( 'password' )),
+                        'Store_status' =>"enable" ,
                     ];
                     //   return $this->respond( $data );
                     $checkuser = $umodel->where( 'Store_username', $data[ 'Store_username' ] )->findAll();

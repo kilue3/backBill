@@ -36,11 +36,13 @@ $routes->post('/registeruser', 'RegisterUser::create');
 $routes->post('/Login', 'Login::index');
 $routes->post('/Resetpass', 'Login::Resetpass');
 $routes->get('/alldata', 'Login::selectall');
+$routes->post('/Storelogin', 'Login::Storelogin');
 
 
 
 //manage user//////////
 $routes->get('/allusers', 'Users::index');
+$routes->get('/allnormaluser', 'Users::allnormaluser');
 $routes->get('/infouser/(:any)', 'Users::finduser/$1');
 $routes->delete('/delectuser/(:any)', 'Users::Delect_User/$1');
 $routes->put('/repassword/(:any)', 'Users::Resetpass/$1');
@@ -50,6 +52,9 @@ $routes->get('opbilldateshow', 'Bill::index');///show day in input
 // $routes->post('/opbill', 'Bill::openbill');
 $routes->post('/checkdate', 'Bill::checkDate');
 $routes->put('/updateEndbill', 'Bill::updateEndbill'); 
+$routes->get('/selecttoday', 'Bill::selectToday');///show day in input
+$routes->post('/addbill', 'Bill::Addbill');
+$routes->get('/billlistative/(:any)', 'Bill::Billative/$1');///show day in input
 
 ///////////////////Store///////////////////////
 $routes->get('/storelist', 'Store::index');
