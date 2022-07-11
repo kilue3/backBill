@@ -55,6 +55,14 @@ $routes->put('/updateEndbill', 'Bill::updateEndbill');
 $routes->get('/selecttoday', 'Bill::selectToday');///show day in input
 $routes->post('/addbill', 'Bill::Addbill');
 $routes->get('/billlistative/(:any)', 'Bill::Billative/$1');///show day in input
+$routes->get('/billid/(:any)', 'Bill::findBillop/$1');//bill_detailpage
+$routes->put('/editamountbill/(:any)', 'Bill::Editamount/$1');//edit_amount
+$routes->post('/addfile/(:any)', 'Bill::Addfile/$1');
+$routes->get('/listfile/(:any)', 'Bill::Listfile/$1');//bill_detailpage
+$routes->delete('/Delectfile/(:any)', 'Bill::Delect_file/$1');
+$routes->delete('/Delectbills/(:any)', 'Bill::Delect_bills/$1');
+
+
 
 ///////////////////Store///////////////////////
 $routes->get('/storelist', 'Store::index');
