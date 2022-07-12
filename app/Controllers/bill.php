@@ -292,18 +292,17 @@ class Bill extends ResourceController
             return $this->respond( $response );
 
         } else {
-            
 
             return $this->respond( $data );
         }
 
     }
-    
+
     public function Delect_file( $id = null )
  {
 
-    $umodel = new FilebillModel();
-    $data = $umodel->where( 'id', $id )->findAll();
+        $umodel = new FilebillModel();
+        $data = $umodel->where( 'id', $id )->findAll();
         if ( count( $data ) == 1 ) {
             $umodel->where( 'id', $id )->delete();
             $response = [
@@ -315,12 +314,12 @@ class Bill extends ResourceController
             return $this->failNotFound( 'No file ID' );
         }
     }
- 
+
     public function Delect_bills( $id = null )
  {
 
-    $umodel = new BilladdModel();
-    $data = $umodel->where( 'bill_id', $id )->findAll();
+        $umodel = new BilladdModel();
+        $data = $umodel->where( 'bill_id', $id )->findAll();
         if ( count( $data ) == 1 ) {
             $umodel->where( 'bill_id', $id )->delete();
             $response = [
@@ -330,6 +329,59 @@ class Bill extends ResourceController
             return $this->respond( $response );
         } else {
             return $this->failNotFound( 'No file ID' );
+        }
+    }
+
+    public function Movefile($id = null)
+ {
+
+        $target_dir = 'C:/xampp new/htdocs/Mback/img/upload/';
+        // $target_dir = 'D:/img/';
+
+        if ( isset( $_FILES[ 'image' ][ 'name' ] ) ) {
+            $target_file = $target_dir . basename( $_FILES[ 'image' ][ 'name' ] );
+            $imageFileType = strtolower( pathinfo( $target_file, PATHINFO_EXTENSION ) );
+            if ( move_uploaded_file( $_FILES[ 'image' ][ 'tmp_name' ], $target_file ) ) {
+                $umodel = new FilebillModel();
+                $bmodel = new BilladdModel();
+                date_default_timezone_set( 'Asia/bangkok' );
+                $myTime = date( 'Y-m-d H:i:s' );
+                $data = [
+                    'id_bill' =>  $id,
+                    'file_name' =>  basename( $_FILES[ 'image' ][ 'name' ] ),
+                    'file_url' =>  $target_file,
+                    'file_date' =>  $myTime
+
+                ];
+                $checkbill = $bmodel->where( 'bill_id', $id )->findAll();
+
+                if ( count( $checkbill ) == 1 ) {
+                    $umodel->insert( $data );
+                    if ( $umodel ) {
+                        $response = [ 'message'  => 'success' ];
+                        return $this->respond( $response );
+                    } else {
+                        $response = [ 'message' => 'fail' ];
+                        return $this->respond( $response );
+                    }
+                } else {
+                    $response = [ 'message' => 'notfound' ];
+                    return $this->respond( $response );
+                }
+
+                echo 'The file '. basename( $_FILES[ 'image' ][ 'name' ] ),$target_file. ' has been uploaded.';
+            } else {
+                echo 'Sorry, there was an error uploading your file.';
+            }
+
+        } else {
+            $response = [
+
+                'message' =>  'file',
+                'detail'=>'File not found.'
+            ];
+            return $this->respond( $response );
+
         }
     }
 

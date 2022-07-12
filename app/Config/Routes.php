@@ -61,6 +61,7 @@ $routes->post('/addfile/(:any)', 'Bill::Addfile/$1');
 $routes->get('/listfile/(:any)', 'Bill::Listfile/$1');//bill_detailpage
 $routes->delete('/Delectfile/(:any)', 'Bill::Delect_file/$1');
 $routes->delete('/Delectbills/(:any)', 'Bill::Delect_bills/$1');
+$routes->post('/movefiles/(:any)', 'Bill::Movefile/$1');
 
 
 
