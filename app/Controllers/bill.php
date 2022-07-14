@@ -9,6 +9,8 @@ use App\Models\UserModel;
 use App\Models\BillModel;
 use App\Models\BilladdModel;
 use App\Models\FilebillModel;
+use App\Models\CommentModel;
+
 
 use ResourceBundle;
 
@@ -31,6 +33,25 @@ class Bill extends ResourceController
         return $this->respond( $response );
 
     }
+//     public function Billinmonth()
+//  {
+//     $umodel = new BilladdModel();
+
+//     $data = [
+//         'month' => $this->request->getVar( 'month' )
+//     ]
+//         $where ="month MONTH(bill_op_time) = '".$data['month']."'"
+//         $umodel->where();
+//         $checkdate = $umodel->findAll();
+
+//         foreach ( $checkdate as $row ) {
+
+//             $days = $row[ 'Days' ];
+//         }
+//         $response = [ 'Days' => $days ];
+//         return $this->respond( $response );
+
+//     }
 
     public function selectToday()
  {
@@ -135,7 +156,7 @@ class Bill extends ResourceController
             'bill_id' => $this->request->getVar( 'bill_id' ),
             'bill_amount' => $this->request->getVar( 'number' ),
             'bill_detail' => $this->request->getVar( 'bill_detail' ),
-            'store_id' => $this->request->getVar( 'store_id' ),
+            'id_store' => $this->request->getVar( 'store_id' ),
             'bill_op_time' => $myTime,
             'bill_status' => 'wait',
         ];
@@ -160,27 +181,11 @@ class Bill extends ResourceController
     public function Billative( $id = null )
  {
         $umodel = new BilladdModel();
+        //  $where1 = "id_store = '".$id."' AND bill_status ='wait' OR bill_status = 'รออนุมัติ' ";
 
-        $bill = $umodel->where( 'bill_status', 'wait' )->findAll();
-        //  foreach ( $bill as $row ) {
-
-        //     $bid = $row[ 'bill_id' ];
-        //     $amount = $row[ 'bill_amount' ];
-        //     $detail = $row[ 'bill_detail' ];
-        //     $billtime = $row[ 'bill_op_time' ];
-        //     $billstatus = $row[ 'bill_status' ];
-
-        // }
-        //  $response = [
-
-        //     'message'  => 'success',
-        //     'id'  => $bid,
-        //     'amount'  => $amount,
-        //     'detail'  => $detail,
-        //     'billtime'  => $billtime,
-        //     'billstatus'  => $billstatus,
-
-        // ];
+        $where = "id_store = '".$id."' ";
+        $bill = $umodel->where($where)->findAll();
+        
         return $this->respond( $bill );
 
     }
@@ -188,15 +193,16 @@ class Bill extends ResourceController
     public function findBillop( $id = null )
  {
         $umodel = new BilladdModel();
-        $data = $umodel->where( 'bill_id', $id )->findAll();
+        $data = $umodel->where( 'bill_id', $id )->join('store', 'Store_id = id_store ', 'left')->findAll();
         if ( count( $data ) === 1 ) {
             foreach ( $data as $row ) {
                 $id = $row[ 'bill_id' ];
                 $amount = $row[ 'bill_amount' ];
                 $billDetail = $row[ 'bill_detail' ];
-                $store_id = $row[ 'store_id' ];
+                $store_id = $row[ 'id_store' ];
                 $bill_op_time = $row[ 'bill_op_time' ];
                 $billstatus = $row[ 'bill_status' ];
+                $storename = $row[ 'Store_name' ];
 
             }
             $response = [
@@ -207,6 +213,8 @@ class Bill extends ResourceController
                 'billstatus' => $billstatus,
                 'bill_op_time' =>  $bill_op_time,
                 'billDetail' =>  $billDetail,
+                'Store_name' =>  $storename,
+
                 // 'file_name' =>  $file_name,
                 // 'file_date' =>  $file_date,
                 // 'file_url' =>  $file_url,
@@ -250,35 +258,7 @@ class Bill extends ResourceController
 
     }
 
-    public function Addfile( $id = null )
- {
-        $umodel = new FilebillModel();
-        $bmodel = new BilladdModel();
-
-        $data = [
-            'id_bill' =>  $this->request->getVar( 'bid' ),
-            'file_name' =>  $this->request->getVar( 'filename' ),
-            'file_url' =>  $this->request->getVar( 'fileurl' ),
-            'file_date' =>  $this->request->getVar( 'filedate' )
-
-        ];
-        $checkbill = $bmodel->where( 'bill_id', $id )->findAll();
-
-        if ( count( $checkbill ) == 1 ) {
-            $umodel->insert( $data );
-            if ( $umodel ) {
-                $response = [ 'message'  => 'success' ];
-                return $this->respond( $response );
-            } else {
-                $response = [ 'message' => 'fail' ];
-                return $this->respond( $response );
-            }
-        } else {
-            $response = [ 'message' => 'notfound' ];
-            return $this->respond( $response );
-        }
-
-    }
+    
 
     public function Listfile( $id = null )
  {
@@ -385,4 +365,115 @@ class Bill extends ResourceController
         }
     }
 
+    public function sendApprove( $id = null )
+ {
+    
+        $cmodel = new CommentModel();
+        $bmodel = new BilladdModel();
+        date_default_timezone_set( 'Asia/bangkok' );
+        $myTime = date( 'Y-m-d H:i:s' );
+
+        $data = [
+            'id_bill' =>  $this->request->getVar( 'id_bill' ),
+            'cm_username' =>  $this->request->getVar('username'),
+            'cm_note' =>  $this->request->getVar( 'cm_note' ),
+            'cm_status' =>  $this->request->getVar( 'cm_status' ),
+            'cm_time' =>  $myTime,
+            
+
+        ];
+        $data2 =[
+            'bill_status' =>  $this->request->getVar( 'cm_status' ),
+        ];
+        $checkbill = $bmodel->where( 'bill_id', $id )->findAll();
+
+        if ( count( $checkbill ) == 1 ) {
+            $bmodel->update( $id, $data2);
+
+            $cmodel->insert( $data );
+            if ( $cmodel ) {
+                $response = [ 'message'  => 'success' ];
+                return $this->respond( $response );
+            } else {
+                $response = [ 'message' => 'fail' ];
+                return $this->respond( $response );
+            }
+        } else {
+            $response = [ 'message' => 'notfound' ];
+            return $this->respond( $response );
+        }
+
+    }
+
+    public function Approve( $id = null )
+    {
+       
+           $cmodel = new CommentModel();
+           $bmodel = new BilladdModel();
+           date_default_timezone_set( 'Asia/bangkok' );
+           $myTime = date( 'Y-m-d H:i:s' );
+   
+           $data = [
+               'id_bill' =>  $this->request->getVar( 'id_bill' ),
+               'cm_username' =>  $this->request->getVar('username'),
+               'cm_note' =>  $this->request->getVar( 'cm_note' ),
+               'cm_status' =>  $this->request->getVar( 'cm_status' ),
+               'cm_time' =>  $myTime,
+               
+   
+           ];
+           $data2 =[
+               'bill_status' =>  $this->request->getVar( 'cm_status' ),
+           ];
+           $checkbill = $bmodel->where( 'bill_id', $id )->findAll();
+   
+           if ( count( $checkbill ) == 1 ) {
+               $bmodel->update( $id, $data2);
+   
+               $cmodel->insert( $data );
+               if ( $cmodel ) {
+                   $response = [ 'message'  => 'success' ];
+                   return $this->respond( $response );
+               } else {
+                   $response = [ 'message' => 'fail' ];
+                   return $this->respond( $response );
+               }
+           } else {
+               $response = [ 'message' => 'notfound' ];
+               return $this->respond( $response );
+           }
+   
+       }
+   
+    public function findCmbill( $id = null )
+ {
+        $umodel = new CommentModel();
+        $checkcm = $umodel->where( 'id_bill', $id )->findAll();
+
+        
+        $response = [ 'message,' => 'success',
+        'data,' => $checkcm,
+         ];
+        return $this->respond( $checkcm );
+
+    }
+    public function Billlist( $id = null )
+    {
+           $umodel = new BilladdModel();
+            $where = "bill_status ='wait' OR bill_status = 'รออนุมัติ'OR bill_status = 'ไม่ผ่านการอนุมัติ' ";
+           $bill = $umodel->where($where)->join('store', 'Store_id = id_store ', 'left')->orderBy( 'bill_id', 'DESC' )->findAll();
+          
+           return $this->respond( $bill );
+   
+       }
+       public function Billpasslist( $id = null )
+       {
+              $umodel = new BilladdModel();
+               $where = "bill_status = 'อนุมัติแล้ว' ";
+              $bill = $umodel->where($where)->join('store', 'Store_id = id_store ', 'left')->orderBy( 'bill_op_time', 'DESC' )->findAll();
+             
+              return $this->respond( $bill );
+      
+          }
+                   
 }

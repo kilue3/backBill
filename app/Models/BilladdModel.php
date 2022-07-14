@@ -8,5 +8,5 @@ class BilladdModel extends Model
 {
     protected $table = 'opbill';
     protected $primaryKey = 'bill_id';
-    protected $allowedFields = ['bill_id', 'bill_amount', 'bill_detail', 'store_id', 'bill_op_time', 'bill_status'];
+    protected $allowedFields = ['bill_id', 'bill_amount', 'bill_detail', 'id_store', 'bill_op_time', 'bill_status'];
 }

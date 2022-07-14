@@ -49,6 +49,8 @@ $routes->put('/repassword/(:any)', 'Users::Resetpass/$1');
 $routes->post('/addusers', 'Users::Adduser');
 //////////////bill//////////////////////
 $routes->get('opbilldateshow', 'Bill::index');///show day in input
+$routes->post('Billinmonth', 'Billinmonth::index');
+
 // $routes->post('/opbill', 'Bill::openbill');
 $routes->post('/checkdate', 'Bill::checkDate');
 $routes->put('/updateEndbill', 'Bill::updateEndbill'); 
@@ -62,6 +64,14 @@ $routes->get('/listfile/(:any)', 'Bill::Listfile/$1');//bill_detailpage
 $routes->delete('/Delectfile/(:any)', 'Bill::Delect_file/$1');
 $routes->delete('/Delectbills/(:any)', 'Bill::Delect_bills/$1');
 $routes->post('/movefiles/(:any)', 'Bill::Movefile/$1');
+$routes->post('/sentapprove/(:any)', 'Bill::sendApprove/$1');
+$routes->post('/approve/(:any)', 'Bill::Approve/$1');
+$routes->get('/billpasslist', 'Bill::Billpasslist');
+
+
+
+$routes->get('/findcmbill/(:any)', 'Bill::findCmbill/$1');//bill_detailpage
+$routes->get('/billlist', 'Bill::Billlist');//bill_detailpage
 
 
 
@@ -71,6 +81,8 @@ $routes->get('/findstore/(:any)', 'Store::findstore/$1');
 $routes->delete('/delectstore/(:any)', 'Store::Delect_store/$1');
 $routes->put('/Resetpassstore/(:any)', 'Store::Resetpass/$1'); 
 $routes->post('/addStore', 'Store::AddStore'); 
+
+$routes->get('/export', 'ExcelExport::index');
 
 
 
