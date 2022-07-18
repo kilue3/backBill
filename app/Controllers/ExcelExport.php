@@ -42,9 +42,9 @@ class ExcelExport extends Controller
           $rows++;
       } 
      $writer = new Xlsx($spreadsheet);
-      $writer->save("upload/".$fileName);
+      $writer->save("C:\Users\First\Downloads/".$fileName);
       header("Content-Type: application/vnd.ms-excel");
-      redirect(base_url()."/upload/".$fileName); 
+      redirect("http://localhost/Mback/public/upload".$fileName); 
   }
  
 }
