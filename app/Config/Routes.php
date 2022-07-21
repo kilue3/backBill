@@ -71,6 +71,8 @@ $routes->get('/findcmbill/(:any)', 'Bill::findCmbill/$1');//bill_detailpage
 $routes->get('/billlist', 'Bill::Billlist');//bill_detailpage
 $routes->get('/monthyearlist', 'Bill::Monthyearlist');//
 $routes->get('/billbymonthyearlist/(:any)', 'Bill::Billbymonthyearlist/$1');//
+$routes->get('/searchIDbill/(:any)', 'Bill::searchIDbill/$1');//
+$routes->get('/searchIDbillwait/(:any)', 'Bill::searchIDbillwait/$1');//
 
 
 

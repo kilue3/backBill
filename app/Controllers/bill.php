@@ -343,7 +343,10 @@ class Bill extends ResourceController
         // $target_dir = 'D:/img/';
 
         if ( isset( $_FILES[ 'image' ][ 'name' ] ) ) {
-            $target_file = $target_dir . basename( $_FILES[ 'image' ][ 'name' ] );
+
+            $temp = explode(".", $_FILES["image"]["name"]);
+            $newfilename = round(microtime(true)) . '.' . end($temp);
+            $target_file = $target_dir.$newfilename;
             $imageFileType = strtolower( pathinfo( $target_file, PATHINFO_EXTENSION ) );
             if ( move_uploaded_file( $_FILES[ 'image' ][ 'tmp_name' ], $target_file ) ) {
                 $umodel = new FilebillModel();
@@ -352,7 +355,7 @@ class Bill extends ResourceController
                 $myTime = date( 'Y-m-d H:i:s' );
                 $data = [
                     'id_bill' =>  $id,
-                    'file_name' =>  basename( $_FILES[ 'image' ][ 'name' ] ),
+                    'file_name' =>   $newfilename,
                     'file_url' =>  $target_file,
                     'file_date' =>  $myTime
 
@@ -486,7 +489,12 @@ class Bill extends ResourceController
            $umodel = new BilladdModel();
             $where = "bill_status ='wait' OR bill_status = 'รออนุมัติ'OR bill_status = 'ไม่ผ่านการอนุมัติ' ";
            $bill = $umodel->where($where)->join('store', 'Store_id = id_store ', 'left')->orderBy( 'bill_id', 'DESC' )->findAll();
-          
+           if ( count( $bill ) >= 1 ) {
+            return $this->respond( $bill );
+        } else {
+            $response = [ 'message' => 'notfound' ];
+            return $this->respond( $response );
+        }
            return $this->respond( $bill );
    
        }
@@ -495,14 +503,18 @@ class Bill extends ResourceController
               $umodel = new BilladdModel();
                $where = "bill_status = 'อนุมัติแล้ว' ";
               $bill = $umodel->where($where)->join('store', 'Store_id = id_store ', 'left')->orderBy( 'bill_op_time', 'DESC' )->findAll();
-             
-              return $this->respond( $bill );
+              if ( count( $bill ) >= 1 ) {
+                return $this->respond( $bill );
+            } else {
+                $response = [ 'message' => 'notfound' ];
+                return $this->respond( $response );
+            }
+
       
           }
           public function Billhistory( $id = null )
           {
                  $umodel = new BilladdModel();
-                 //  $where1 = "id_store = '".$id."' AND bill_status ='wait' OR bill_status = 'รออนุมัติ' ";
          
                  $where = "id_store = '".$id."' AND bill_status ='อนุมัติแล้ว' ";
                  $bill = $umodel->where($where)->orderBy( 'bill_op_time', 'DESC' )->findAll();
@@ -523,13 +535,42 @@ class Bill extends ResourceController
 
                 public function Billbymonthyearlist($id = null)
                 {
-                    $where = "AND bill_status = 'อนุมัติแล้ว' ";
-
+                 
                        $umodel = new BilladdModel();
                $umodel->Where("DATE_FORMAT(bill_op_time, '%Y-%m') ='".$id."'AND bill_status = 'อนุมัติแล้ว'");
                $checkdate = $umodel->join('store', 'Store_id = id_store ', 'left')->findAll();
                 return $this->respond( $checkdate );
                
                    }  
+
+                   public function searchIDbill($id = null)
+                   {
+   
+                          $umodel = new BilladdModel();
+                  $umodel->Where("bill_id like '".$id."' AND bill_status = 'อนุมัติแล้ว'");
+                  $checkdate = $umodel->join('store', 'Store_id = id_store ', 'left')->findAll();
+                  if ( count( $checkdate ) == 1 ) {
+                    return $this->respond( $checkdate );
+                } else {
+                    $response = [ 'message' => 'notfound' ];
+                    return $this->respond( $response );
+                }
+
+            }  
+
+            public function searchIDbillwait($id = null)
+            {
+
+                   $umodel = new BilladdModel();
+           $umodel->Where("bill_id like '".$id."' AND (bill_status = 'wait'  OR bill_status = 'รออนุมัติ' OR bill_status = 'ไม่ผ่านการอนุมัติ')");
+           $checkdate = $umodel->join('store', 'Store_id = id_store ', 'left')->findAll();
+           if ( count( $checkdate ) == 1 ) {
+             return $this->respond( $checkdate );
+         } else {
+             $response = [ 'message' => 'notfound' ];
+             return $this->respond( $response );
+         }
+
+     }  
 
 }
