@@ -56,8 +56,6 @@ $routes->get('/billlistative/(:any)', 'Bill::Billative/$1');///show day in input
 $routes->get('/billid/(:any)', 'Bill::findBillop/$1');//bill_detailpage
 $routes->put('/editamountbill/(:any)', 'Bill::Editamount/$1');//edit_amount
 $routes->put('/editdetailbill/(:any)', 'Bill::Editdetail/$1');//edit_amount
-
-
 $routes->post('/addfile/(:any)', 'Bill::Addfile/$1');
 $routes->get('/listfile/(:any)', 'Bill::Listfile/$1');//bill_detailpage
 $routes->delete('/Delectfile/(:any)', 'Bill::Delect_file/$1');
@@ -70,18 +68,24 @@ $routes->get('/billhistory/(:any)', 'Bill::Billhistory/$1');
 $routes->get('/findcmbill/(:any)', 'Bill::findCmbill/$1');//bill_detailpage
 $routes->get('/billlist', 'Bill::Billlist');//bill_detailpage
 $routes->get('/monthyearlist', 'Bill::Monthyearlist');//
-$routes->get('/billbymonthyearlist/(:any)', 'Bill::Billbymonthyearlist/$1');//
+$routes->post('/billbymonthyearlist', 'Bill::Billbymonthyearlist');//
 $routes->get('/searchIDbill/(:any)', 'Bill::searchIDbill/$1');//
+$routes->get('/searchIDbillnotpass/(:any)', 'Bill::searchIDbillnotpass/$1');//
+
 $routes->get('/searchIDbillwait/(:any)', 'Bill::searchIDbillwait/$1');//
-
-
-
+$routes->get('/Monthlist/(:any)', 'Bill::Monthlist/$1');//
+$routes->get('/Billpassyearlist/(:any)', 'Bill::Billpassyearlist/$1');//
+$routes->get('/Billnotpasslist', 'Bill::Billnotpasslist');//
 ///////////////////Store///////////////////////
 $routes->get('/storelist', 'Store::index');
 $routes->get('/findstore/(:any)', 'Store::findstore/$1');
 $routes->delete('/delectstore/(:any)', 'Store::Delect_store/$1');
 $routes->put('/Resetpassstore/(:any)', 'Store::Resetpass/$1'); 
 $routes->post('/addStore', 'Store::AddStore'); 
+$routes->get('/CheckStore/(:any)', 'Store::CheckStore/$1');//
+$routes->get('/searchNameStore/(:any)', 'Store::searchNameStore/$1');//
+
+
 $routes->get('/export', 'ExcelExport::index');
 
 

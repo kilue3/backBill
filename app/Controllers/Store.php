@@ -12,8 +12,10 @@ use ResourceBundle;
 class Store extends ResourceController
 {
     use ResponseTrait;
+    private $db2;
     public function index()
     {
+        
         $model = new Storemodel();
         $data = $model->orderBy('Store_id', 'ASC')->findAll();
         return $this->respond($data);
@@ -30,14 +32,25 @@ class Store extends ResourceController
                $username = $row[ 'Store_username' ];
                $password = $row[ 'Store_password' ];
                $tel = $row[ 'Tel' ];
-   
+               $Address = $row[ 'Address' ];
+               $VendGroup = $row[ 'VendGroup' ];
+               $BPC_WHTid = $row[ 'bill_BPC_WHTid' ];
+               $BPC_BranchNo = $row[ 'bill_BPC_BranchNo' ];
+               $bill_TaxGroup = $row[ 'bill_TaxGroup' ];
+
+               
            }
            $response = [
                'message' =>  'success',
                'store_name' => $store_name,
                'username' => $username,
                'email' => $email,
+               'Address' => $Address,
                'contactname' => $name,
+               'VendGroup' => $VendGroup,
+               'BPC_WHTid' => $BPC_WHTid,
+               'BPC_BranchNo' => $BPC_BranchNo,
+               'taxGroup' => $bill_TaxGroup,
 
                'tel' => $tel,
                'password'=>$password,
@@ -92,6 +105,12 @@ class Store extends ResourceController
                         'Tel' => $this->request->getVar( 'tel' ),
                         'Store_password' =>  md5($this->request->getVar( 'password' )),
                         'Store_status' =>"enable" ,
+                        'bill_BPC_BranchNo' => $this->request->getVar( 'BPC_BranchNo' ),
+                        'bill_BPC_WHTid' => $this->request->getVar( 'BPC_WHTid' ),
+                        'Address' => $this->request->getVar( 'Address' ),
+                        'VendGroup' => $this->request->getVar( 'VendGroup' ),
+                        'bill_TaxGroup' => $this->request->getVar( 'TaxGroup' ),
+
                     ];
                     //   return $this->respond( $data );
                     $checkuser = $umodel->where( 'Store_username', $data[ 'Store_username' ] )->findAll();
@@ -110,4 +129,45 @@ class Store extends ResourceController
                     //
             
                 }
+
+                public function CheckStore($id= null)
+                {
+                       $umodel = new Storemodel();
+                      
+                       $checkuser = $umodel->where( 'Store_username', $id )->findAll();
+                       if ( count( $checkuser ) === 0 ) {
+               
+                             $response = [
+                            
+                               'message'  => 'success'
+                           ];
+                           return $this->respond( $response );
+                       } else {
+                           $response = [ 'message' => 'fail' ];
+                           return $this->respond( $response );
+                       }
+                       //
+               
+                   }
+
+                   public function searchNameStore($id = null)
+                   {
+   
+                    $umodel = new Storemodel();
+                    $umodel->Where("Store_name Like '%".$id."%'");
+                  $store = $umodel->findAll();
+                  if ( count( $store ) >= 1 ) {
+                    $response = [ 'message' => 'success',
+                'data'=>$store ];
+
+
+                    return $this->respond( $response );
+                } else {
+                    $response = [ 'message' => 'notfound' ];
+                    return $this->respond( $response );
+                }
+
+            }  
+
+                
 }
